@@ -118,18 +118,20 @@ def predictProfilesBulk(theta_file, target_file):
     f.close()
     return profiles_and_rr
             
-def writeProfilesToFile(out_prefix, profiles_and_rr, write_rr = False):
+def writeProfilesToFile(out_prefix, profiles_and_rr, write_rr = False, in_frame_only = False):
     fout = io.open(out_prefix + '_predictedindelsummary.txt', 'w')
-    if write_rr: fout_rr = io.open(out_prefix + '_predictedreads.txt', 'w')
+    if write_rr and not in_frame_only: fout_rr = io.open(out_prefix + '_predictedreads.txt', 'w')
     for (guide_id, prof, rep_reads, in_frame) in profiles_and_rr:
         if len(profiles_and_rr) > 1: 
             id_str = u'@@@%s\t%.3f\n' % (guide_id, in_frame)
             fout.write(id_str)
-            if write_rr: 
+            if write_rr and not in_frame_only: 
                 fout_rr.write(id_str)
-        writePredictedProfileToSummary(prof, fout)
-        if write_rr: 
-            writePredictedRepReadsToFile(prof, rep_reads, fout_rr)
+        
+        if not in_frame_only:
+            writePredictedProfileToSummary(prof, fout)
+            if write_rr: 
+                writePredictedRepReadsToFile(prof, rep_reads, fout_rr)
     fout.close()
 
 def predictMutationsSingle(target_seq, pam_idx, out_prefix, theta_file = DEFAULT_MODEL):
@@ -139,12 +141,12 @@ def predictMutationsSingle(target_seq, pam_idx, out_prefix, theta_file = DEFAULT
     writeProfilesToFile(out_prefix, [('Test Guide', p_predict, rep_reads, in_frame_perc)], write_rr=True)
     print('Done!')
     
-def predictMutationsBulk(target_file, out_prefix, theta_file = DEFAULT_MODEL):
+def predictMutationsBulk(target_file, out_prefix, theta_file = DEFAULT_MODEL, in_frame_only = False):
     #Target File: a tab-delimited file with columns:  ID, Target, PAM Index
     print('Predicting mutations...')
     profiles_and_rr = predictProfilesBulk(theta_file, target_file)
     print('Writing to file...')
-    writeProfilesToFile(out_prefix, profiles_and_rr, write_rr=True)
+    writeProfilesToFile(out_prefix, profiles_and_rr, write_rr=True, in_frame_only=in_frame_only)
     print('Done!')    
  
 if __name__ == '__main__':

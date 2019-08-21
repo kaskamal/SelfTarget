@@ -28,7 +28,10 @@ if __name__ == '__main__':
         if not os.path.isfile(batch_file):
             raise Exception('Count not find batch file ' + batch_file)
 
-        predictMutationsBulk(batch_file, output_prefix)
+        if args.inFrame == None:
+            predictMutationsBulk(batch_file, output_prefix)
+        else:
+            predictMutationsBulk(batch_file, output_prefix, in_frame_only = True)
 
     elif args.single:    #Single mode
 
