@@ -3,10 +3,10 @@ import argparse
 
 from predictor.model import computePredictedProfile, readTheta, setFeaturesDir, setReadsDir
 from predictor.features import calculateFeaturesForGenIndelFile, readFeaturesData
-from predictor.predict import predictMutationsBulk, predictMutationsSingle
+from predictor.predict import predictMutationsBulk, predictMutationsSingle, predictMutationsBulkInFrame
 
 if __name__ == '__main__':
-      
+
     parser = argparse.ArgumentParser(description="Scripts for processing and predicting CRISPR/Cas9-generated mutations")
     parser.add_argument("-s", "--single", help="Run single gRNA prediction", action="store_true")
     parser.add_argument("-t", "--target", help="23bp target sequence to use when running single gRNA prediction")
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         if args.inFrame == None:
             predictMutationsBulk(batch_file, output_prefix)
         else:
-            predictMutationsBulk(batch_file, output_prefix, in_frame_only = True)
+            predictMutationsBulkInFrame(batch_file, output_prefix)
 
     elif args.single:    #Single mode
 
